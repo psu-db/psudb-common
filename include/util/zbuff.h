@@ -4,7 +4,7 @@
  * Copyright (C) 2023 Douglas Rumbaugh <drumbaugh@psu.edu> 
  *                    Dong Xie <dongx@psu.edu>
  *
- * All rights reserved. Published under the Modified BSD License.
+ * All rights reserved. Published under the Revised BSD License.
  *
  */
 #pragma once
@@ -12,8 +12,8 @@
 #include "util/alignment.h"
 namespace psudb {
 
-// The number of bytes of zeroes available in ZEROBUF. Will be
-// a multiple of the parm::PAGE_SIZE.
+// The number of bytes of zeroes available in ZEROBUFF. Will be
+// a multiple of the PAGE_SIZE.
 constexpr size_t ZEROBUFF_SIZE = 8 * PAGE_SIZE;
 
 // A large, preallocated, buffer of zeroes used for pre-allocation

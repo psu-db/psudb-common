@@ -3,7 +3,7 @@
  *
  * Copyright (C) 2023 Dong Xie <dongx@psu.edu>
  *
- * All rights reserved. Published under the Modified BSD License.
+ * All rights reserved. Published under the Revised BSD License.
  *
  */
 #pragma once

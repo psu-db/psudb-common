@@ -5,7 +5,7 @@
  *
  * Copyright (C) 2008-2017 Timo Bingmann <tb@panthema.net>
  *
- * Range Query functionality added by Dong Xie, Copyright (C) 2022-2023
+ * Range Sample functionality added by Dong Xie, Copyright (C) 2022-2023
  *
  * All rights reserved. Published under the Boost Software License, Version 1.0
  ******************************************************************************/

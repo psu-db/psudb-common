@@ -3,7 +3,7 @@
  *
  * Copyright (C) 2023 Douglas Rumbaugh <drumbaugh@psu.edu> 
  *
- * All rights reserved. Published under the Modified BSD License.
+ * All rights reserved. Published under the Revised BSD License.
  *
  * FIXME: this code is added as-is, but is kind of a mess. There's a
  * lot here that could be cleaned up. -- Doug
