@@ -85,7 +85,7 @@ public:
     }
 
     size_t memory_usage() {
-        return this->m_bitarray.get_memory_usage();
+        return this->m_bitarray.memory_usage();
     }
 private: 
     size_t m_n_salts;
