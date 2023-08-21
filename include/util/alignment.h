@@ -12,6 +12,7 @@
 #include <cstdlib>
 #include <cstdint>
 #include <cstddef>
+#include <cstdio>
 #include <memory>
 
 namespace psudb {
