@@ -9,7 +9,7 @@
  */
 #pragma once
 
-#include "util/alignment.h"
+#include "psu-util/alignment.h"
 namespace psudb {
 
 // The number of bytes of zeroes available in ZEROBUFF. Will be
