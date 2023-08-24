@@ -13,6 +13,8 @@
 #include <cstdint>
 #include <cstddef>
 #include <cstdio>
+#include <cstdlib>
+#include <cstring>
 #include <memory>
 
 namespace psudb {
@@ -77,6 +79,20 @@ static inline char *sf_aligned_alloc(size_t alignment, size_t *size) {
         fprintf(stderr, "[E]: Memory allocation failed; out of memory\n");
         exit(EXIT_FAILURE);
     }
+
+    return alloc;
+}
+
+static inline char*sf_aligned_calloc(size_t alignment, size_t cnt, size_t size) {
+    size_t p_size = TYPEALIGN(alignment, size*cnt);
+
+    char *alloc = (char *) std::aligned_alloc(alignment, p_size);
+    if (alloc == nullptr) {
+        fprintf(stderr, "[E]: Memory allocation failed; out of memory\n");
+        exit(EXIT_FAILURE);
+    }
+
+    memset(alloc, 0, p_size);
 
     return alloc;
 }
