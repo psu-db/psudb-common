@@ -58,7 +58,7 @@ size_t TYPEALIGN(size_t alignment, size_t size) {
  * buffer. buffer must be page aligned, and idx must be less than the
  * number of pages within the buffer, or the result is undefined.
  */
-static inline char *get_page(char *buffer, size_t idx) {
+static inline std::byte *get_page(std::byte *buffer, size_t idx) {
     return buffer + (idx * PAGE_SIZE);
 }
 
@@ -70,9 +70,8 @@ static inline char *get_page(char *buffer, size_t idx) {
  *
  * This function will never return nullptr--it will successfully allocate, or error out.
  */
-static inline char *sf_aligned_alloc(size_t alignment, size_t *size) {
-    size_t p_size = TYPEALIGN(alignment, *size);
-    *size = p_size;
+static inline std::byte *sf_aligned_alloc(size_t alignment, size_t size) {
+    size_t p_size = TYPEALIGN(alignment, size);
 
     char *alloc = (char *) std::aligned_alloc(alignment, p_size);
     if (alloc == nullptr) {
@@ -83,7 +82,8 @@ static inline char *sf_aligned_alloc(size_t alignment, size_t *size) {
     return alloc;
 }
 
-static inline char*sf_aligned_calloc(size_t alignment, size_t cnt, size_t size) {
+static inline std::byte *sf_aligned_calloc(size_t alignment, size_t cnt, 
+                                           size_t size) {
     size_t p_size = TYPEALIGN(alignment, size*cnt);
 
     char *alloc = (char *) std::aligned_alloc(alignment, p_size);
