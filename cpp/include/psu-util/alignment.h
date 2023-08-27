@@ -63,12 +63,11 @@ static inline std::byte *get_page(std::byte *buffer, size_t idx) {
 }
 
 /*
- * A "safe" aligned allocation function. Automatically pads the input size amount to
- * verify alignment and replaces the value of size_t with the physical allocation amount.
- * Additionally, validates the output of std::aligned_alloc and throws an error if the
- * returned value is null.
+ * A safe aligned allocation function. Automatically pads the
+ * size to be a multiple of alignment prior to allocating memory.
  *
- * This function will never return nullptr--it will successfully allocate, or error out.
+ * This function will never return nullptr--if a memory allocation
+ * fails, it will write an error message to stderr and exit the program.
  */
 static inline std::byte *sf_aligned_alloc(size_t alignment, size_t size) {
     size_t p_size = TYPEALIGN(alignment, size);
@@ -82,6 +81,14 @@ static inline std::byte *sf_aligned_alloc(size_t alignment, size_t size) {
     return alloc;
 }
 
+/*
+ * A safe aligned allocation function. Automatically pads the cnt*size
+ * to be a multiple of alignment prior to allocating memory.  The
+ * returned memory will be zeroed.
+ *
+ * This function will never return nullptr--if a memory allocation
+ * fails, it will write an error message to stderr and exit the program.
+ */
 static inline std::byte *sf_aligned_calloc(size_t alignment, size_t cnt, 
                                            size_t size) {
     size_t p_size = TYPEALIGN(alignment, size*cnt);

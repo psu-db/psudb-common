@@ -10,14 +10,19 @@
 #pragma once
 
 #include "psu-util/alignment.h"
+
 namespace psudb {
 
-// The number of bytes of zeroes available in ZEROBUFF. Will be
-// a multiple of the PAGE_SIZE.
+/*
+ * The number of bytes of zeroes available in ZEROBUFF. Will be
+ * a multiple of the PAGE_SIZE.
+ */
 constexpr size_t ZEROBUFF_SIZE = 8 * PAGE_SIZE;
 
-// A large, preallocated, buffer of zeroes used for pre-allocation
-// of pages in a file.
+/*
+ * A large sector aligned buffer of zeroes. Useful for initializing
+ * pages in a file.
+ */
 alignas(SECTOR_SIZE) const char ZEROBUFF[ZEROBUFF_SIZE] = {0};
 
 }
