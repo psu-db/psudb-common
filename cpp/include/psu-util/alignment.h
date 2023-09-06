@@ -52,15 +52,6 @@ size_t TYPEALIGN(size_t alignment, size_t size) {
 #define MAXALIGN_OF             8
 
 /*
- * Returns a pointer to the idx'th page contained within a multi-page
- * buffer. buffer must be page aligned, and idx must be less than the
- * number of pages within the buffer, or the result is undefined.
- */
-static inline char *get_page(char *buffer, size_t idx) {
-    return buffer + (idx * PAGE_SIZE);
-}
-
-/*
  * A "safe" aligned allocation function. Automatically pads the input size amount to
  * verify alignment and replaces the value of size_t with the physical allocation amount.
  * Additionally, validates the output of std::aligned_alloc and throws an error if the
