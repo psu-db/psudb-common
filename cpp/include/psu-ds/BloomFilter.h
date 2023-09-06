@@ -11,9 +11,9 @@
 #include <cmath>
 #include <gsl/gsl_rng.h>
 
-#include "ds/BitArray.h"
-#include "util/alignment.h"
-#include "util/hash.h"
+#include "psu-ds/BitArray.h"
+#include "psu-util/alignment.h"
+#include "psu-util/hash.h"
 
 namespace psudb {
 

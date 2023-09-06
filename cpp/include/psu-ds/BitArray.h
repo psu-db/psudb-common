@@ -12,7 +12,7 @@
 #include <memory>
 #include <cstring>
 
-#include "util/alignment.h"
+#include "psu-util/alignment.h"
 
 namespace psudb {
 

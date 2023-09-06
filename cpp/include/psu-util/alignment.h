@@ -13,9 +13,13 @@
 #include <cstdint>
 #include <cstddef>
 #include <cstdio>
+#include <cstdlib>
+#include <cstring>
 #include <memory>
 
 namespace psudb {
+
+using std::byte;
 
 /* 
  * The correct quantity for use in alignment of buffers to 
@@ -57,17 +61,39 @@ size_t TYPEALIGN(size_t alignment, size_t size) {
  * Additionally, validates the output of std::aligned_alloc and throws an error if the
  * returned value is null.
  *
- * This function will never return nullptr--it will successfully allocate, or error out.
+ * This function will never return nullptr--if a memory allocation
+ * fails, it will write an error message to stderr and exit the program.
  */
-static inline char *sf_aligned_alloc(size_t alignment, size_t *size) {
-    size_t p_size = TYPEALIGN(alignment, *size);
-    *size = p_size;
+static inline byte *sf_aligned_alloc(size_t alignment, size_t size) {
+    size_t p_size = TYPEALIGN(alignment, size);
 
-    char *alloc = (char *) std::aligned_alloc(alignment, p_size);
+    byte *alloc = (byte *) std::aligned_alloc(alignment, p_size);
     if (alloc == nullptr) {
         fprintf(stderr, "[E]: Memory allocation failed; out of memory\n");
         exit(EXIT_FAILURE);
     }
+
+    return alloc;
+}
+
+/*
+ * A safe aligned allocation function. Automatically pads the cnt*size
+ * to be a multiple of alignment prior to allocating memory.  The
+ * returned memory will be zeroed.
+ *
+ * This function will never return nullptr--if a memory allocation
+ * fails, it will write an error message to stderr and exit the program.
+ */
+static inline byte *sf_aligned_calloc(size_t alignment, size_t cnt, size_t size) {
+    size_t p_size = TYPEALIGN(alignment, size*cnt);
+
+    byte *alloc = (byte *) std::aligned_alloc(alignment, p_size);
+    if (alloc == nullptr) {
+        fprintf(stderr, "[E]: Memory allocation failed; out of memory\n");
+        exit(EXIT_FAILURE);
+    }
+
+    memset(alloc, 0, p_size);
 
     return alloc;
 }
