@@ -30,7 +30,7 @@ public:
     BitArray(size_t bits): m_bits(bits), m_data(nullptr) {
         if (m_bits > 0) {
             size_t n_bytes = (m_bits >> 3) << 3;
-            m_data = sf_aligned_alloc(CACHELINE_SIZE, &n_bytes);
+            m_data = sf_aligned_alloc(CACHELINE_SIZE, n_bytes);
             memset(m_data, 0, n_bytes);
         }
     }
@@ -41,18 +41,18 @@ public:
 
     bool is_set(size_t bit) {
         if (bit >= m_bits) return false;
-        return m_data[bit >> 3] & (1 << (bit & 7));
+        return ((char) m_data[bit >> 3]) & (1 << (bit & 7));
     }
 
     int set(size_t bit) {
         if (bit >= m_bits) return 0;
-        m_data[bit >> 3] |= ((char) 1 << (bit & 7));
+        m_data[bit >> 3] |= ((std::byte) 1 << (bit & 7));
         return 1;
     }
 
     int unset(size_t bit) {
         if (bit >= m_bits) return 0;
-        m_data[bit >> 3] &= ~((char) 1 << (bit & 7));
+        m_data[bit >> 3] &= ~((std::byte) 1 << (bit & 7));
         return 1;
     }
 
@@ -70,7 +70,7 @@ public:
     
 private:
     size_t m_bits;
-    char* m_data;
+    std::byte* m_data;
 };
 
 }
