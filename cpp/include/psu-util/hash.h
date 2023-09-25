@@ -10,6 +10,7 @@
 
 #include <cstdlib>
 #include <cstdint>
+#include <cstddef>
 
 namespace psudb {
 

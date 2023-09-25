@@ -39,8 +39,7 @@ public:
     : m_n_bits(n_bits), m_n_salts(k), m_bitarray(n_bits) {
         gsl_rng *rng = gsl_rng_alloc(gsl_rng_mt19937);
 
-        size_t sz = k * sizeof(uint16_t);
-        salt = (uint16_t*) sf_aligned_alloc(CACHELINE_SIZE, &sz);
+        salt = (uint16_t*) sf_aligned_alloc(CACHELINE_SIZE, k *sizeof(uint16_t));
         for (size_t i = 0;  i < k; ++i) {
             salt[i] = (uint16_t) gsl_rng_uniform_int(rng, 1 << 16);
         }
