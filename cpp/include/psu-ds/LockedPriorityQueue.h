@@ -20,6 +20,7 @@ template <class T, class Container = std::vector<T>, class Compare = std::less<t
 class LockedPriorityQueue : protected std::priority_queue<T, Container, Compare> {
     typedef std::priority_queue<T, Container, Compare> Parent;
 
+public:
     bool empty() {
         std::unique_lock<std::mutex> lock(m_mutex);
         return Parent::empty();
@@ -40,9 +41,10 @@ class LockedPriorityQueue : protected std::priority_queue<T, Container, Compare>
         Parent::push(item);
     }
 
-    void emplace(T &&item) {
+    template <class... Args>
+    void emplace(Args&&... args) {
         std::unique_lock<std::mutex> lock(m_mutex);
-        Parent::emplace(item);
+        Parent::emplace(std::forward<Args>(args)...);
     }
 
     T pop() {
