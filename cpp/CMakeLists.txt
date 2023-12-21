@@ -11,7 +11,7 @@ set(tests true)
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/bin")
 
-if (debug) 
+#[[if (debug)
     add_compile_options(-g -O0)
     add_compile_options(-fsanitize=address)
     add_link_options(-fsanitize=address)
@@ -19,7 +19,9 @@ if (debug)
     add_link_options(-fsanitize=undefined)
 else()
     add_compile_options(-O3)
-endif()
+endif()]]
+
+set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -Og -g -D_DEBUG")
 
 
 # Test build instructions
@@ -31,3 +33,20 @@ if (tests)
     target_link_libraries(pagedfile_tests PUBLIC check subunit pthread gsl)
     target_include_directories(pagedfile_tests PRIVATE include external/psudb-common/include)
 endif()
+
+enable_testing()
+
+
+# google test
+include(FetchContent)
+FetchContent_Declare(
+        googletest
+        URL https://github.com/google/googletest/archive/03597a01ee50ed33e9dfd640b249b4be3799d395.zip
+)
+# For Windows: Prevent overriding the parent project's compiler/linker settings
+set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
+FetchContent_MakeAvailable(googletest)
+
+add_subdirectory(include/psu-ds)
+
+add_subdirectory(tests)
