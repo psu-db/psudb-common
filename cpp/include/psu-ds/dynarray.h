@@ -18,8 +18,42 @@ namespace psudb {
 
         explicit DynamicArray(const size_t &size) : arr(new T[size]), size_(size) {}
 
+        DynamicArray(std::initializer_list<T> init) : arr(new T[init.size()]), size_(init.size()) {
+            auto it = init.begin();
+            for (size_t i = 0; i < size_; ++i) {
+                arr[i] = *it;
+                it++;
+            }
+        }
+
+        // copy constructor
+        DynamicArray(const DynamicArray<T> &orig) : arr(new T[orig.size_]), size_(orig.size_) {
+            for (size_t i = 0; i < size_; ++i) {
+                this->arr[i] = orig.arr[i];
+            }
+        }
+
+        // copy assignment operators
+        // move & copy operator based on https://codereview.stackexchange.com/a/211253
+        DynamicArray<T> &operator=(const DynamicArray<T> &other) noexcept {
+            DynamicArray<T> temp(other);
+            swap(temp);
+            return *this;
+        }
+
+        // move constructor
+        DynamicArray(DynamicArray<T> &&move_me) noexcept {
+            swap(move_me);
+        }
+
+        // move assignment operator
+        DynamicArray<T> &operator=(DynamicArray<T> &&other) noexcept {
+            swap(other);
+            return *this;
+        }
+
         virtual ~DynamicArray() {
-            delete arr;
+            delete[] arr;
         }
 
         [[nodiscard]] inline T &operator[](size_t index) { return arr[index]; }
@@ -64,9 +98,14 @@ namespace psudb {
                 arr[i] = val;
         }
 
-    private:
-        T *arr;
-        size_t size_;
-    };
+        void swap(DynamicArray<T> &swap_with) {
+            std::swap(arr, swap_with.arr);
+            std::swap(size_, swap_with.size_);
+        }
 
+    private:
+        // pointer to constant
+        T *arr;
+        size_t size_{};
+    };
 }
