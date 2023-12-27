@@ -20,8 +20,8 @@
  * NOP if ENABLE_TIMER is not defined.
  */
 #define TIMER_INIT() \
-    auto timer_start = std::chrono::high_resolution_clock::now(); \
-    auto timer_stop = std::chrono::high_resolution_clock::now();
+    auto thread_local timer_start = std::chrono::high_resolution_clock::now(); \
+    auto thread_local timer_stop = std::chrono::high_resolution_clock::now();
 
 /*
  * Start the timer. Assigns current time to timer_start variable.
