@@ -4,7 +4,7 @@
 #include <gtest/gtest.h>
 #include <cstdlib>
 
-#include "dynarray.h"
+#include "psu-ds/dynarray.h"
 
 TEST(DynamicArrayTest, RandomInts) {
     srand(0);

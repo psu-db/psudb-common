@@ -4,7 +4,7 @@ FUNCTION(ADD_TEST TEST_NAME HEADERS LIBRARY)
     add_executable(
             ${TEST_NAME} ${TEST_NAME}.cpp ${HEADERS}
     )
-    target_include_directories(${TEST_NAME} PUBLIC ../include/${LIBRARY})
+    target_include_directories(${TEST_NAME} PUBLIC ../include)
     target_link_libraries(
             ${TEST_NAME}
             ${LIBRARY}
@@ -17,3 +17,4 @@ ENDFUNCTION()
 include(GoogleTest)
 
 ADD_TEST(dynarray_tests "" psu-ds)
+ADD_TEST(bitarray_tests "" psu-ds psu-util)

@@ -42,8 +42,8 @@ namespace psudb {
         }
 
         // move constructor
-        DynamicArray(DynamicArray<T> &&move_me) noexcept {
-            swap(move_me);
+        DynamicArray(DynamicArray<T> &&move_me) noexcept : arr(move_me.arr), size_(move_me.size_) {
+            move_me.arr= nullptr;
         }
 
         // move assignment operator
