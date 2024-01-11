@@ -57,7 +57,7 @@ TEST(DynamicArrayTest, MoveTest) {
     ASSERT_EQ(y[1], 20);
 
     // move constructor
-    psudb::DynamicArray<int> z = std::move(y);
+    psudb::DynamicArray<int> z{std::move(y)};
     ASSERT_EQ(z.size(), 2);
     ASSERT_EQ(z[0], 10);
     ASSERT_EQ(z[1], 20);
@@ -65,8 +65,7 @@ TEST(DynamicArrayTest, MoveTest) {
 
 TEST(DynamicArrayTest, CopyTests) {
     psudb::DynamicArray<double> x = {0.3, 10};
-    psudb::DynamicArray<double> y = {60, 10, 9.3};
-    {
+    psudb::DynamicArray<double> y = {60, 10, 9.3}; {
         auto z = y;
         ASSERT_EQ(z.size(), y.size());
 
@@ -86,4 +85,8 @@ TEST(DynamicArrayTest, CopyTests) {
     }
     x[0] = x[0] * 2;
     ASSERT_NE(x[0], y[0]);
+
+    // self assign
+    const auto& const_x = x;
+    x = const_x;
 }

@@ -2,6 +2,7 @@
  * include/ds/BitArray.h
  *
  * Copyright (C) 2023 Dong Xie <dongx@psu.edu>
+ *                    Max Norfolk <mnorfolk@psu.edu>
  *
  * All rights reserved. Published under the Revised BSD License.
  *
