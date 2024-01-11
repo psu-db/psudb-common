@@ -50,7 +50,7 @@ static inline off_t pnum_to_offset(PageNum pnum) {
  * buffer. buffer must be page aligned, and idx must be less than the
  * number of pages within the buffer, or the result is undefined.
  */
-static inline char *get_page(char *buffer, size_t idx) {
+static inline byte *get_page(byte *buffer, size_t idx) {
     return buffer + (idx * PAGE_SIZE);
 }
 
