@@ -10,7 +10,7 @@
 TEST(BitArrayTest, SmallBitArray) {
     psudb::BitArray arr{2};
     ASSERT_EQ(arr.size(),2);
-    ASSERT_EQ(arr.memory_usage(), 1); // 1 byte for 2 bits
+    ASSERT_EQ(arr.memory_usage(), psudb::CACHELINE_SIZE); // 1 byte for 2 bits
 
     ASSERT_FALSE(arr.is_set(0));
     ASSERT_FALSE(arr.is_set(1));
