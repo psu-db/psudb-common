@@ -1,12 +1,21 @@
 /*
  * include/util/progess.h
  *
- * Copyright (C) 2023 Douglas Rumbaugh <drumbaugh@psu.edu> 
+ * Copyright (C) 2023 Douglas Rumbaugh <drumbaugh@psu.edu>
  *
  * All rights reserved. Published under the Revised BSD License.
  *
  * A simple progress bar implementation.
  *
+ * NOTE: If the progress bar's total width exceeds the width of the terminal
+ *       the bar will not function correctly. The change_progress_width 
+ *       function is provided to adjust the total width of the progress bar,
+ *       but it is up to the user to set it correctly.
+ *
+ * FIXME: The above caveat may be fixable using the $COLUMNS environment
+ *        variable to automatically get the terminal width, but I don't 
+ *        think that this variable will be updated on terminal resize 
+ *        following the forking off of the process.
  */
 #pragma once
 
@@ -14,8 +23,8 @@
 #include <cstdio>
 #include <string>
 
-static const char *g_prog_bar = "======================================================================";
-static const size_t g_prog_width = 70;
+static const std::string g_prog_bar = "======================================================================";
+static size_t g_prog_width = 70;
 
 /*
  * Display a simple progress bar to standard error based on a provided percentage.  
@@ -27,14 +36,32 @@ static const size_t g_prog_width = 70;
  *
  * The bar uses a carriage return, and so it will sit on the same line unless other 
  * I/O is interspersed with it. 
- *
- * FIXME: In the present implementation, if the terminal buffer width shrinks to less 
- * than the width of the displayed text, it will display on new lines. 
  */
-static void progress_update(double percentage, std::string prompt) {
+static void progress_update(double percentage, const std::string &prompt, FILE *target=stderr) {
     int val = (int) (percentage * 100);
     int lpad = (int) (percentage * g_prog_width);
     int rpad = (int) (g_prog_width - lpad);
-    fprintf(stderr, "\r(%3d%%) %s [%.*s%*s]", val, prompt.c_str(), lpad, g_prog_bar, rpad, "");
-    fflush(stderr);   
+    fprintf(target, "\r(%3d%%) %s [%.*s%*s]", val, prompt.c_str(), lpad, g_prog_bar.c_str(), rpad, "");
+    if (std::abs(1 - percentage) < .0001) {
+        fprintf(target, "\n");
+    }
+    fflush(target);   
+}
+
+/*
+ * Update the "width" of the progress bar. This controls how many
+ * characters width the contents of the bar (between the []) is. The
+ * provided width must be [1, 70], though strange behavior might be exhibited
+ * with bars less than 10 units long.
+ *
+ * Returns true if the value is updated and false if it is not (due to being
+ * out of range).
+ */
+static bool change_progress_width(size_t new_width) {
+    if (new_width >= 1 && new_width <= 70) {
+        g_prog_width = new_width;
+        return true;
+    }
+
+    return false;
 }
