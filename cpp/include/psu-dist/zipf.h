@@ -1,9 +1,5 @@
-#include <algorithm>
-#include <cmath>
-#include <random>
-
 /*
- * include/dist/zipf.h
+ * include/psu-dist/zipf.h
  *
  * Copyright (C) 2017   David Robillard
  * This header is licensed under the CC BY-SA 3.0 license.
@@ -18,6 +14,14 @@
  * ACM TOMACS 6.3 (1996): 169-184
  *
  */
+#pragma once
+
+#include <algorithm>
+#include <cmath>
+#include <random>
+
+namespace psudb {
+
 template<class IntType = unsigned long, class RealType = double>
 class zipf_distribution
 {
@@ -108,3 +112,4 @@ private:
     RealType                                 H_n;   ///< H(n)
     std::uniform_real_distribution<RealType> dist;  ///< [H(x_1), H(n)]
 };
+}
