@@ -19,16 +19,16 @@ namespace psudb {
         DynamicArray() : arr(nullptr), size_(0) {}
 
         explicit DynamicArray(const size_t &size)
-                : arr(reinterpret_cast<T *>(sf_aligned_alloc(CACHELINE_SIZE, size * sizeof(T)))),
-                  size_(size) {
+            : arr(reinterpret_cast<T *>(sf_aligned_alloc(CACHELINE_SIZE, size * sizeof(T)))),
+              size_(size) {
             for (int i = 0; i < size_; ++i) {
                 new(&arr[i]) T{};
             }
         }
 
         DynamicArray(std::initializer_list<T> init)
-                : arr(reinterpret_cast<T *>(sf_aligned_alloc(CACHELINE_SIZE, init.size() * sizeof(T)))),
-                  size_(init.size()) {
+            : arr(reinterpret_cast<T *>(sf_aligned_alloc(CACHELINE_SIZE, init.size() * sizeof(T)))),
+              size_(init.size()) {
             auto it = init.begin();
             for (size_t i = 0; i < size_; ++i) {
                 new(&arr[i]) T{*it};
@@ -36,10 +36,39 @@ namespace psudb {
             }
         }
 
+        explicit DynamicArray(const std::vector<T> &copy_vector)
+            : arr(reinterpret_cast<T *>(sf_aligned_alloc(CACHELINE_SIZE, copy_vector.size() * sizeof(T)))),
+              size_(copy_vector.size()) {
+            auto it = copy_vector.begin();
+            for (size_t i = 0; i < size_; ++i) {
+                new(&arr[i]) T{*it};
+                ++it;
+            }
+        }
+
+        // fills a dynamic array based upon an iterator. the siz needs to be manually passed
+        // if the iterator is a random access iterator (supports end - begin) you may use that constructor instead
+        template<typename It>
+        DynamicArray(const It &begin, const It &end, size_t size)
+            : arr(reinterpret_cast<T *>(sf_aligned_alloc(CACHELINE_SIZE, size * sizeof(T)))),
+              size_(size) {
+            auto it = begin;
+            for (size_t i = 0; i < size_; ++i) {
+                new(&arr[i]) T{*it};
+                ++it;
+            }
+            assert(it == end);
+        }
+
+        // fills a dynamic array based upon an iterator whose size can be determined by
+        // end - begin
+        template<typename It>
+        DynamicArray(const It &begin, const It &end) : DynamicArray(begin, end, end - begin) {}
+
         // copy constructor
         DynamicArray(const DynamicArray<T> &orig)
-                : arr(reinterpret_cast<T *>(sf_aligned_alloc(CACHELINE_SIZE, orig.size_ * sizeof(T)))),
-                  size_(orig.size_) {
+            : arr(reinterpret_cast<T *>(sf_aligned_alloc(CACHELINE_SIZE, orig.size_ * sizeof(T)))),
+              size_(orig.size_) {
             for (size_t i = 0; i < size_; ++i) {
                 new(&arr[i]) T{orig.arr[i]};
             }
@@ -111,7 +140,7 @@ namespace psudb {
                 arr[i] = val;
         }
 
-        void swap(DynamicArray<T> &swap_with) {
+        void swap(DynamicArray<T> &swap_with) noexcept {
             std::swap(arr, swap_with.arr);
             std::swap(size_, swap_with.size_);
         }
