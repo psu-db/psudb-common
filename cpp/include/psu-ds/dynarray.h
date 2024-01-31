@@ -57,7 +57,7 @@ namespace psudb {
                 new(&arr[i]) T{*it};
                 ++it;
             }
-            assert(it == end);
+            assert(it == end && "size is not correct!");
         }
 
         // fills a dynamic array based upon an iterator whose size can be determined by
@@ -146,7 +146,6 @@ namespace psudb {
         }
 
     private:
-        // pointer to constant
         T *arr;
         size_t size_{};
     };
