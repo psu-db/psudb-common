@@ -23,6 +23,8 @@
 #include <cstdio>
 #include <string>
 
+namespace psudb {
+
 static const std::string g_prog_bar = "======================================================================";
 static size_t g_prog_width = 70;
 
@@ -38,11 +40,11 @@ static size_t g_prog_width = 70;
  * I/O is interspersed with it. 
  */
 static void progress_update(double percentage, const std::string &prompt, FILE *target=stderr) {
-    int val = (int) (percentage * 100);
-    int lpad = (int) (percentage * g_prog_width);
-    int rpad = (int) (g_prog_width - lpad);
+    int val =  static_cast<int>(percentage * 100);
+    int lpad = static_cast<int>(percentage * g_prog_width);
+    int rpad = static_cast<int>(g_prog_width - lpad);
     fprintf(target, "\r(%3d%%) %s [%.*s%*s]", val, prompt.c_str(), lpad, g_prog_bar.c_str(), rpad, "");
-    if (std::abs(1 - percentage) < .0001) {
+    if (std::abs(1.0 - percentage) < .0001) {
         fprintf(target, "\n");
     }
     fflush(target);   
@@ -58,10 +60,11 @@ static void progress_update(double percentage, const std::string &prompt, FILE *
  * out of range).
  */
 static bool change_progress_width(size_t new_width) {
-    if (new_width >= 1 && new_width <= 70) {
+    if (new_width >= 1 && new_width <= g_prog_bar.length()) {
         g_prog_width = new_width;
         return true;
     }
 
     return false;
+}
 }
