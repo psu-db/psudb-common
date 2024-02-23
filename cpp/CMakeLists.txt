@@ -32,6 +32,10 @@ if (tests)
     add_executable(pagedfile_tests ${CMAKE_CURRENT_SOURCE_DIR}/tests/pagedfile_tests.cpp)
     target_link_libraries(pagedfile_tests PUBLIC check subunit pthread gsl)
     target_include_directories(pagedfile_tests PRIVATE include external/psudb-common/include)
+
+    add_executable(progressbar_tests ${CMAKE_CURRENT_SOURCE_DIR}/tests/progressbar_tests.cpp)
+    target_link_libraries(progressbar_tests PUBLIC check subunit pthread gsl)
+    target_include_directories(progressbar_tests PRIVATE include external/psudb-common/include)
 endif()
 
 enable_testing()
