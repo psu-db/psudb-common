@@ -86,6 +86,74 @@ START_TEST(t_query)
 }
 END_TEST
 
+START_TEST(t_create_mdsp)
+{
+    auto bs = psudb::bsm::BentleySaxe<record_t, psudb::ISAMTree<key_type, val_type>, true>();
+
+    ck_assert_int_eq(bs.record_count(), 0);
+}
+END_TEST
+
+
+START_TEST(t_insert_mdsp)
+{
+    auto bs = psudb::bsm::BentleySaxe<record_t, psudb::ISAMTree<key_type, val_type>, true>();
+    size_t n=100000;
+    for (size_t i=0; i<n; i++) {
+        record_t rec = {i, i};
+        bs.insert(rec);
+    }
+
+    ck_assert_int_eq(bs.record_count(), n);
+}
+END_TEST
+
+START_TEST(t_query_mdsp)
+{
+    auto bs = psudb::bsm::BentleySaxe<record_t, psudb::ISAMTree<key_type, val_type>, true>();
+
+    std::vector<key_type> keys;
+    for (size_t i=0; i<10000; i++) {
+        keys.push_back(i);
+    }
+
+    std::random_device rd;
+    std::mt19937 rng(rd());
+
+    std::shuffle(keys.begin(), keys.end(), rng);
+
+    for (size_t i=0; i<keys.size(); i++) {
+        record_t rec = {keys[i], i};
+        bs.insert(rec);
+    }
+
+    std::sort(keys.begin(), keys.end());
+
+    for (size_t i=0; i<1000; i++) {
+        size_t idx = rand() % keys.size();
+        size_t ub = idx + rand() % 1000;
+
+        if(ub >= keys.size()) {
+            ub = keys.size() - 1;
+        }
+
+        psudb::ISAMTree<key_type, val_type>::RangeQueryParameters parm;
+        parm.lower_bound = keys[idx];
+        parm.upper_bound = keys[ub];
+
+        auto res = bs.query(&parm);
+
+        ck_assert_int_eq(res.size(), ub - idx);
+        for (size_t j=0; j < res.size(); j++) {
+            ck_assert_int_ge(res[j].first, keys[idx]);
+            ck_assert_int_le(res[j].first, keys[ub]);
+        }
+    }
+
+}
+END_TEST
+
+
 
 Suite *unit_testing()
 {
@@ -93,18 +161,21 @@ Suite *unit_testing()
 
     TCase *create = tcase_create("BentleySaxe::Create Unit Tests");
     tcase_add_test(create, t_create);
+    tcase_add_test(create, t_create_mdsp);
 
     suite_add_tcase(unit, create);
 
 
     TCase *insert = tcase_create("BentleySaxe::insert Unit Tests");
     tcase_add_test(insert, t_insert);
+    tcase_add_test(insert, t_insert_mdsp);
 
     suite_add_tcase(unit, insert);
 
 
     TCase *query = tcase_create("BentleySaxe::query Unit Tests");
     tcase_add_test(query, t_query);
+    tcase_add_test(query, t_query_mdsp);
     tcase_set_timeout(query, 1000);
 
     suite_add_tcase(unit, query);

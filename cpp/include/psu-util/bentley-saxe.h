@@ -20,6 +20,10 @@
 #include <vector>
 #include <concepts>
 #include <cassert>
+#include <cstdlib>
+#include <queue>
+
+#include "psu-ds/PriorityQueue.h"
 
 namespace psudb { namespace bsm {
 
@@ -32,7 +36,7 @@ concept BentleyInterface = requires(DS ds, R rec, void *q, std::vector<R> recset
     {ds.record_count()} -> std::convertible_to<size_t>;
 };
 
-template <typename R, BentleyInterface<R> DS>
+template <typename R, BentleyInterface<R> DS, bool MDSP=false>
 class BentleySaxe {
     typedef std::vector<R> result_set;
     typedef std::vector<R>::const_iterator record_itr;
@@ -48,23 +52,67 @@ public:
     }
 
     void insert(R &rec) {
-        record_set S = {rec};
-
-        /* find the first empty level */
+        record_set S; 
         ssize_t target_idx = -1;
-        for (size_t i=0; i<m_levels.size(); i++) {
-            if (m_levels[i] == nullptr) {
-                target_idx = i;
-                break;
+
+        if constexpr (MDSP) {
+            /* find the first empty level */
+            target_idx = -1;
+            std::vector<std::vector<R>> tmp_data;
+            std::vector<size_t> indexes;
+
+            tmp_data.push_back({rec});
+            indexes.emplace_back(0);
+
+            size_t reccnt = 1;
+
+            for (size_t i=0; i<m_levels.size(); i++) {
+                if (m_levels[i] == nullptr) {
+                    target_idx = i;
+                    break;
+                }
+
+                reccnt += m_levels[i]->record_count();
+                tmp_data.emplace_back(m_levels[i]->unbuild());
+                delete m_levels[i];
+                m_levels[i] = nullptr;
+                indexes.emplace_back(0);
             }
 
-            /* deconstruct the level */
-            auto tmp = m_levels[i]->unbuild();
-            delete m_levels[i];
-            m_levels[i] = nullptr;
-            
-            /* union the level's records into the running set */
-            S.insert(S.end(), tmp.begin(), tmp.end());
+            S.reserve(reccnt);
+
+            psudb::PriorityQueue<R> pq(tmp_data.size()); 
+            for (size_t i=0; i < tmp_data.size(); i++) {
+                pq.push(&tmp_data[i][0], i);
+            }
+
+            while (pq.size()) {
+                auto next = pq.peek(); pq.pop();
+
+                S.emplace_back(*next.data);
+
+                if (indexes[next.version] + 1 < tmp_data[next.version].size()) {
+                    pq.push(&tmp_data[next.version][++indexes[next.version]], next.version);
+                }
+            }
+        } else {
+            S = {rec};
+            /* find the first empty level */
+            target_idx = -1;
+            for (size_t i=0; i<m_levels.size(); i++) {
+                if (m_levels[i] == nullptr) {
+                    target_idx = i;
+                    break;
+                }
+
+                /* deconstruct the level */
+                auto tmp = m_levels[i]->unbuild();
+                delete m_levels[i];
+                m_levels[i] = nullptr;
+                
+                /*  union the level's records into the running set */
+                S.insert(S.end(), tmp.begin(), tmp.end());
+            }
         }
 
         /* 
@@ -72,9 +120,17 @@ public:
          * need to grow the structure.
          */
         if (target_idx == -1) {
-            m_levels.emplace_back(DS::build(S));
+            if constexpr (MDSP) {
+                m_levels.emplace_back(DS::build_presorted(S));
+            } else {
+                m_levels.emplace_back(DS::build(S));
+            }
         } else {
-            m_levels[target_idx] = DS::build(S);
+            if constexpr (MDSP) {
+                m_levels[target_idx] = DS::build_presorted(S);
+            } else {
+                m_levels[target_idx] = DS::build(S);
+            }
         }
     }
 
