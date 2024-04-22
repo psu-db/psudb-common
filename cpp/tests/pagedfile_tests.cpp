@@ -1,8 +1,9 @@
-#include <check.h>
 #include <string>
 
 #include "psu-io/PagedFile.h"
 #include "psu-io/PagedFileIterator.h"
+
+#include <check.h>
 
 using namespace psudb;
 
