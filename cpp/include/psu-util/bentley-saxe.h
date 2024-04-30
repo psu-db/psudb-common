@@ -30,7 +30,7 @@ namespace psudb { namespace bsm {
 template <typename DS, typename R>
 concept BentleyInterface = requires(DS ds, R rec, void *q, std::vector<R> recset) {
     {ds.query(q)} -> std::same_as<std::vector<R>>;
-    {ds.query_merge(recset, recset)} -> std::same_as<std::vector<R>>;
+    {ds.query_merge(recset, recset, q)} -> std::same_as<std::vector<R>>;
     {ds.unbuild()} -> std::same_as<std::vector<R>>;
     {DS::build(recset)} -> std::same_as<DS*>;
     {ds.record_count()} -> std::convertible_to<size_t>;
@@ -141,7 +141,7 @@ public:
         for (size_t i=0; i<m_levels.size(); i++) {
             if (m_levels[i]) {
                 auto temp = m_levels[i]->query(q);
-                results = m_levels[i]->query_merge(results, temp);
+                results = m_levels[i]->query_merge(results, temp, q);
             }
         }
 

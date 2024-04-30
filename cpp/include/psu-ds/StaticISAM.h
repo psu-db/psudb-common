@@ -72,7 +72,7 @@ public:
         return std::move(rs);
     }
 
-    std::vector<R> query_merge(std::vector<R> &rsa, std::vector<R> &rsb) {
+    std::vector<R> query_merge(std::vector<R> &rsa, std::vector<R> &rsb, void *parms) {
         rsa.insert(rsa.end(), rsb.begin(), rsb.end());
         return std::move(rsa);
     }
