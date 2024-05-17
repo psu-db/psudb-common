@@ -30,6 +30,7 @@ concept BentleyInterface = requires(DS ds, R rec, void *q, std::vector<R> recset
     {ds.unbuild()} -> std::same_as<std::vector<R>>;
     {DS::build(recset)} -> std::same_as<DS*>;
     {ds.record_count()} -> std::convertible_to<size_t>;
+    {ds.memory_usage()} -> std::convertible_to<size_t>;
 };
 
 template <typename R, BentleyInterface<R> DS>
@@ -97,6 +98,17 @@ public:
         for (size_t i=0; i<m_levels.size(); i++) {
             if (m_levels[i]) {
                 total += m_levels[i]->record_count();
+            }
+        }
+
+        return total;
+    }
+
+    size_t memory_usage() {
+        size_t total = 0;
+        for (size_t i=0; i<m_levels.size(); i++) {
+            if (m_levels[i]) {
+                total += m_levels[i]->memory_usage();
             }
         }
 

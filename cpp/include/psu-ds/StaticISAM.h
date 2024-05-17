@@ -85,6 +85,10 @@ public:
         return m_root - m_inodes + 1 - (m_data.size() == 0);
     }
 
+    size_t memory_usage() {
+        return internal_node_count() * sizeof(inode);
+    }
+
     ~ISAMTree() {
         free(m_inodes);
     }
