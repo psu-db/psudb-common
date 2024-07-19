@@ -34,3 +34,6 @@
 # ccls language server files
 .ccls
 .ccls-cache
+
+*/bin/*
+*/build/*
