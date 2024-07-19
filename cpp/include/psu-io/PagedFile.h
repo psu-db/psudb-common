@@ -63,6 +63,30 @@ public:
     }
 
     /*
+     * Reads the built-in meta page (PNUM=INVALID_PNUM) into the
+     * provided buffer. It is necessary for buffer_ptr to be SECTOR_SIZE
+     * aligned and for it to be large enough to accommodate PAGE_SIZE
+     * bytes. If the read succeeds, returns 1. Otherwise returns 0. The 
+     * contents of buffer_ptr are undefined in the case of an error.
+     */
+    int read_metapage(byte *buffer_ptr) {
+        return raw_read(buffer_ptr, PAGE_SIZE, pnum_to_offset(INVALID_PNUM));
+    }
+
+
+    /*
+     * Writes to the built-in meta page (PNUM=INVALID_PNUM) from the
+     * provided buffer. It is necessary for buffer_ptr to be SECTOR_SIZE
+     * aligned and for it to be large enough to accommodate PAGE_SIZE
+     * bytes. If the write succeeds, returns 1. Otherwise, returns 0. The
+     * contents of the metapage within the file are undefined in the event 
+     * of an error.
+     */ 
+    int write_metapage(const byte *buffer_ptr) {
+        return raw_write(buffer_ptr, PAGE_SIZE, pnum_to_offset(INVALID_PNUM));
+    }
+
+    /*
      * Reads data from the specified page into a buffer pointed to by
      * buffer_ptr. It is necessary for buffer_ptr to be parm::SECTOR_SIZE
      * aligned, and also for it to be large enough to accommodate

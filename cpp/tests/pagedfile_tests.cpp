@@ -303,6 +303,24 @@ START_TEST(t_iterator_page_range)
 }
 END_TEST
 
+START_TEST(t_meta_page) 
+{
+    auto pfile = PagedFile::create(new_file, true);
+
+    byte *write_buffer = (byte *) aligned_alloc(SECTOR_SIZE, PAGE_SIZE);
+    byte *read_buffer = (byte *) aligned_alloc(SECTOR_SIZE, PAGE_SIZE);
+    *((int*) write_buffer) = 123;
+
+    /* writing to the meta page should succeed */
+    ck_assert_int_eq(pfile->write_metapage(write_buffer), 1);
+
+    /* reading from the meta page should also succeed */
+    ck_assert_int_eq(pfile->read_metapage(read_buffer), 1);
+
+    /* the contents of the metapage should match the data written earlier */
+    ck_assert_int_eq(*((int*) read_buffer), 123);
+}
+
 
 Suite *unit_testing()
 {
@@ -336,6 +354,10 @@ Suite *unit_testing()
     tcase_add_test(iter, t_iterator);
     tcase_add_test(iter, t_iterator_page_range);
     suite_add_tcase(unit, iter);
+
+    TCase *meta = tcase_create("PagedFile::metapage Testing");
+    tcase_add_test(meta, t_meta_page);
+    suite_add_tcase(unit, meta);
 
     return unit;
 }
