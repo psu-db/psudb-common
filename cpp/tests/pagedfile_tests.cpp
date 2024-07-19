@@ -321,6 +321,40 @@ START_TEST(t_meta_page)
     ck_assert_int_eq(*((int*) read_buffer), 123);
 }
 
+START_TEST(t_meta_noclobber) 
+{
+    auto pfile = PagedFile::create(new_file, true);
+    PageNum page_cnt = 13;
+    byte *buffer = (byte *) aligned_alloc(SECTOR_SIZE, page_cnt*PAGE_SIZE);
+
+    for (size_t i=0; i<page_cnt; i++) {
+        *((int*) (buffer + PAGE_SIZE * i)) = i;
+    }
+
+    pfile->allocate_pages(page_cnt);
+
+    ck_assert_int_eq(pfile->write_pages(1, page_cnt, buffer), 1);
+
+    byte *buffer2 = (byte *) aligned_alloc(SECTOR_SIZE, PAGE_SIZE);
+    *((int*) buffer2) = 123;
+    ck_assert_int_eq(pfile->write_metapage(buffer2), 1);
+
+    free(buffer);
+
+    auto pfile2 = PagedFile::create(new_file, false);
+    buffer = (byte *) aligned_alloc(SECTOR_SIZE, page_cnt*PAGE_SIZE);
+
+    ck_assert_int_eq(pfile2->read_pages(1, page_cnt, buffer), 1);
+    for (size_t i=0; i<page_cnt; i++) {
+        ck_assert_int_eq(*((int*) (buffer + PAGE_SIZE * i)), i);
+    }
+    
+    ck_assert_int_eq(pfile2->read_metapage(buffer), 1);
+
+    ck_assert_int_eq(*((int*) buffer), 123);
+
+    free(buffer);
+}
 
 Suite *unit_testing()
 {
@@ -357,6 +391,7 @@ Suite *unit_testing()
 
     TCase *meta = tcase_create("PagedFile::metapage Testing");
     tcase_add_test(meta, t_meta_page);
+    tcase_add_test(meta, t_meta_noclobber);
     suite_add_tcase(unit, meta);
 
     return unit;
