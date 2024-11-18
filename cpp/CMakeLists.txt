@@ -21,7 +21,7 @@ else()
     add_compile_options(-O3)
 endif()]]
 
-set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -Og -g -D_DEBUG")
+set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -Og -g -D_DEBUG -Wall")
 
 
 # Test build instructions for check unit tests

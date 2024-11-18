@@ -10,6 +10,7 @@
 
 #include <cstdlib>
 #include <cstdio>
+#include <algorithm>
 
 /* WARNING: due to #define issues, must include this header LAST in C++ projects */
 #include <check.h>

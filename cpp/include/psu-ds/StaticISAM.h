@@ -13,6 +13,7 @@
 #include <cassert>
 #include <vector>
 #include <array>
+#include <algorithm>
 
 #include "psu-util/alignment.h"
 

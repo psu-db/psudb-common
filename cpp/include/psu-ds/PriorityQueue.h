@@ -100,8 +100,8 @@ public:
 
 private:
     std::vector<queue_record<R>> data;
-    CMP cmp;
     size_t tail;
+    CMP cmp;
     R *baseline;
 
     /*

@@ -20,6 +20,7 @@
 #include <vector>
 #include <concepts>
 #include <cassert>
+#include <cstdlib>
 
 namespace psudb { namespace bsm {
 

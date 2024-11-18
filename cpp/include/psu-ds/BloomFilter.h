@@ -87,8 +87,8 @@ public:
         return this->m_bitarray.memory_usage();
     }
 private: 
-    size_t m_n_salts;
     size_t m_n_bits;
+    size_t m_n_salts;
     uint16_t* salt;
 
     BitArray m_bitarray;
