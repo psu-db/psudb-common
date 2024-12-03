@@ -1611,7 +1611,6 @@ public:
         }
 
         const node* lca = n;
-        uint64_t lca_weight_count = calculate_weight(lca);
         ans.clear();
         while (ans.size() < k) {
             const node* now = lca;

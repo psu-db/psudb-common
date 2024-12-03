@@ -39,7 +39,7 @@ static size_t g_prog_width = 70;
  * The bar uses a carriage return, and so it will sit on the same line unless other 
  * I/O is interspersed with it. 
  */
-static void progress_update(double percentage, const std::string &prompt, FILE *target=stderr) {
+[[maybe_unused]] static void progress_update(double percentage, const std::string &prompt, FILE *target=stderr) {
     int val =  static_cast<int>(percentage * 100);
     int lpad = static_cast<int>(percentage * g_prog_width);
     int rpad = static_cast<int>(g_prog_width - lpad);
@@ -59,7 +59,7 @@ static void progress_update(double percentage, const std::string &prompt, FILE *
  * Returns true if the value is updated and false if it is not (due to being
  * out of range).
  */
-static bool change_progress_width(size_t new_width) {
+[[maybe_unused]] static bool change_progress_width(size_t new_width) {
     if (new_width >= 1 && new_width <= g_prog_bar.length()) {
         g_prog_width = new_width;
         return true;

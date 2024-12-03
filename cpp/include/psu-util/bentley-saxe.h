@@ -36,7 +36,7 @@ concept BentleyInterface = requires(DS ds, R rec, void *q, std::vector<R> recset
 template <typename R, BentleyInterface<R> DS>
 class BentleySaxe {
     typedef std::vector<R> result_set;
-    typedef std::vector<R>::const_iterator record_itr;
+    typedef typename std::vector<R>::const_iterator record_itr;
     typedef std::vector<R> record_set;
 
 public:
