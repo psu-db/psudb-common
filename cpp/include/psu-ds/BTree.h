@@ -1882,13 +1882,13 @@ private:
         if (!n) return 0;
         size_t res = 0;
         if (n->is_leafnode()) {
-            LeafNode* leaf = static_cast<LeafNode*>(n);
+            const LeafNode* leaf = static_cast<const LeafNode*>(n);
             for (unsigned short s = 0; s < n->slotuse; ++s)
                 if (leaf->key(s) >= lower && leaf->key(s) <= upper) ++res;
         } else {
-            InnerNode* inner = static_cast<InnerNode*>(n);
-            auto low_slot = find_lower(n, lower);
-            auto high_slot = find_upper(n, upper);
+            const InnerNode* inner = static_cast<const InnerNode*>(n);
+            auto low_slot = find_lower(inner, lower);
+            auto high_slot = find_upper(inner, upper);
             for (unsigned short s = low_slot; s <= high_slot; ++s)
                 res += range_count_recur(inner->childid[s], lower, upper);
         }
