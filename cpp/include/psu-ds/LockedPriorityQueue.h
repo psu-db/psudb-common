@@ -26,7 +26,7 @@ public:
         return Parent::empty();
     }
 
-    bool size() {
+    size_t size() {
         std::unique_lock<std::mutex> lock(m_mutex);
         return Parent::size();
     }
