@@ -1890,7 +1890,7 @@ private:
             auto low_slot = find_lower(inner, lower);
             auto high_slot = find_upper(inner, upper);
             for (unsigned short s = low_slot; s <= high_slot; ++s)
-                res += range_count_recur(inner->childid[s], lower, upper);
+                res += range_count_recur(const_cast<const node*>(const_cast<InnerNode*>(inner)->childid[s]), lower, upper);
         }
         return res;
     }
