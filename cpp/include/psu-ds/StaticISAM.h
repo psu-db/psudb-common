@@ -83,7 +83,8 @@ public:
     }
 
     size_t internal_node_count() {
-        return m_root - m_inodes + 1 - (m_data.size() == 0);
+        if (m_data.size() == 0) return 0;
+        return m_root - m_inodes + 1;
     }
 
     ~ISAMTree() {
@@ -93,8 +94,8 @@ public:
 
 private:
     std::vector<R> m_data;
-    inode *m_root;
     inode *m_inodes;
+    inode *m_root;
 
     ISAMTree(std::vector<R> &records) : m_inodes(nullptr), m_root(nullptr) {
         m_data = std::move(records);

@@ -29,8 +29,7 @@ namespace psudb {
          */
         explicit BitArray(size_t bits) : m_bits(bits), m_memory_usage(0), m_data(nullptr) {
             if (m_bits > 0) {
-                size_t n_bytes = m_bits >> 3;
-                if (n_bytes % CACHELINE_SIZE == 0 && (m_bits & 0x7) != 0) n_bytes++;
+                size_t n_bytes = (m_bits + 7) >> 3;
 
                 m_memory_usage = sf_aligned_alloc(CACHELINE_SIZE, n_bytes, &m_data);
                 memset(m_data, 0, m_memory_usage);

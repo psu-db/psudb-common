@@ -24,29 +24,28 @@ endif()]]
 set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -Og -g -D_DEBUG -Wall")
 
 
-# Test build instructions for check unit tests
-if (tests) 
-    set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/bin/tests")
-    make_directory(bin/tests/data)
-
-    add_executable(pagedfile_tests ${CMAKE_CURRENT_SOURCE_DIR}/tests/pagedfile_tests.cpp)
-    target_link_libraries(pagedfile_tests PUBLIC check subunit pthread gsl)
-    target_include_directories(pagedfile_tests PRIVATE include external/psudb-common/include)
-
-    add_executable(progressbar_tests ${CMAKE_CURRENT_SOURCE_DIR}/tests/progressbar_tests.cpp)
-    target_link_libraries(progressbar_tests PUBLIC check subunit pthread gsl)
-    target_include_directories(progressbar_tests PRIVATE include external/psudb-common/include)
-
-    add_executable(static_isam_tests ${CMAKE_CURRENT_SOURCE_DIR}/tests/static_isam_tests.cpp)
-    target_link_libraries(static_isam_tests PUBLIC check subunit pthread gsl)
-    target_include_directories(static_isam_tests PRIVATE include external/psudb-common/include)
-
-    add_executable(bentley_saxe_tests ${CMAKE_CURRENT_SOURCE_DIR}/tests/bentley_saxe_tests.cpp)
-    target_link_libraries(bentley_saxe_tests PUBLIC check subunit pthread gsl)
-    target_include_directories(bentley_saxe_tests PRIVATE include external/psudb-common/include)
-endif()
-
 enable_testing()
+
+# Test build instructions for check unit tests
+FUNCTION(ADD_CHECK_TEST TEST_NAME)
+    add_executable(${TEST_NAME} ${CMAKE_CURRENT_SOURCE_DIR}/tests/${TEST_NAME}.cpp)
+    target_include_directories(${TEST_NAME} PRIVATE include)
+    target_link_libraries(${TEST_NAME} PUBLIC check subunit pthread ${ARGN})
+ENDFUNCTION()
+
+if (tests)
+    set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/bin/tests")
+    make_directory(${CMAKE_CURRENT_SOURCE_DIR}/bin/tests/data)
+
+    ADD_CHECK_TEST(pagedfile_tests gsl)
+    ADD_CHECK_TEST(progressbar_tests)
+    ADD_CHECK_TEST(static_isam_tests gsl)
+    ADD_CHECK_TEST(bentley_saxe_tests gsl)
+    ADD_CHECK_TEST(priority_queue_tests)
+    ADD_CHECK_TEST(bitarray_check_tests)
+    ADD_CHECK_TEST(bloomfilter_tests gsl)
+    ADD_CHECK_TEST(alias_tests gsl)
+endif()
 
 
 # google test

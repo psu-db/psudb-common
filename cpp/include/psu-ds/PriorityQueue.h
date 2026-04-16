@@ -1,12 +1,9 @@
 /*
- * include/ds/BloomFilter.h
+ * include/psu-ds/PriorityQueue.h
  *
- * Copyright (C) 2023 Douglas Rumbaugh <drumbaugh@psu.edu> 
+ * Copyright (C) 2023-2026 Douglas B. Rumbaugh <dbrumbaugh@harrisburgu.edu>
  *
  * All rights reserved. Published under the Revised BSD License.
- *
- * FIXME: this code is added as-is, but is kind of a mess. There's a
- * lot here that could be cleaned up. -- Doug
  *
  */
 #pragma once
@@ -51,6 +48,10 @@ public:
         return tail;
     }
 
+    bool empty() const {
+        return tail == 0;
+    }
+
     void pop() {
         assert(this->tail != 0);
 
@@ -85,16 +86,15 @@ public:
     }
 
 
-    queue_record<R> peek(size_t depth=0) {
-        ssize_t idx = 0;
-        size_t cur_depth = 0;
+    queue_record<R> peek() {
+        assert(this->tail > 0);
+        return this->data[0];
+    }
 
-        while (cur_depth != depth) {
-            idx = min_child(idx);
-            assert(idx != -1);
-            cur_depth++;
-        }
-
+    queue_record<R> peek_second() {
+        assert(this->tail > 1);
+        ssize_t idx = min_child(0);
+        assert(idx != -1);
         return this->data[idx];
     }
 
@@ -102,26 +102,15 @@ private:
     std::vector<queue_record<R>> data;
     size_t tail;
     CMP cmp;
-    R *baseline;
 
     /*
      * Swap the elements at position a and position
      * b within the heap
      */
     inline void swap(size_t a, size_t b) {
-        if (a == b) return;
-
-        queue_record temp = this->data[a];
+        auto temp = this->data[a];
         this->data[a] = this->data[b];
         this->data[b] = temp;
-    }
-
-    inline size_t left_child(size_t idx) {
-        return 2 * idx + 1;
-    }
-
-    inline size_t right_child(size_t idx) {
-        return 2 * idx + 2;
     }
 
     inline size_t parent(size_t idx) {
@@ -129,33 +118,39 @@ private:
     }
 
     inline ssize_t min_child(size_t idx) {
-        ssize_t left = left_child(idx) < tail ? left_child(idx) : -1;
-        ssize_t right = right_child(idx) < tail ? right_child(idx) : -1;
-
-        if (left == -1 && right == -1) {
+        size_t left = 2 * idx + 1;
+        if (left >= tail)
             return -1;
-        } else if (left == -1) {
-            return right;
-        } else  if (right == -1) {
-            return left;
-        }
 
-        return (heap_cmp(left, right)) ? left : right;
+        size_t right = left + 1;
+        if (right >= tail)
+            return left;
+
+        return heap_cmp(left, right) ? left : right;
     }
 
     inline bool heap_cmp(size_t a, size_t b) {
-        if (data[a].data != data[b].data) {
-            return cmp(data[a].data, data[b].data);
-        } else if (data[a].version != data[b].version) {
+        /* If the values differ, compare by value. Use both directions
+         * to distinguish "a < b" from "equal" -- when values are equal,
+         * fall through to version/tombstone tiebreaking. */
+        if (cmp(data[a].data, data[b].data)) {
+            return true;
+        } else if (cmp(data[b].data, data[a].data)) {
+            return false;
+        }
+
+        /* Values are equal -- break ties by version. */
+        if (data[a].version != data[b].version) {
             return data[a].version < data[b].version;
         }
 
+        /* Same value and version -- break ties by tombstone status. */
         constexpr bool has_tombstone = requires(const R &r) {
             r.is_tombstone();
         };
 
         if constexpr (has_tombstone) {
-            return data[a].data->is_tombstone() && data[b].data->is_tombstone();
+            return data[a].data->is_tombstone() && !data[b].data->is_tombstone();
         } else {
             return false;
         }

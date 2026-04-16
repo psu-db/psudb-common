@@ -15,6 +15,7 @@
 #include <cstdlib>
 #include <cstring>
 #include <climits>
+#include <cstdint>
 
 namespace psudb {
 
